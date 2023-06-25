@@ -1,0 +1,59 @@
+
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
+import java.io.StringReader;
+
+public class XMLTester {
+    public static void main(String[] args) {
+        String xml = "<root><element1>Value 1</element1><element2>Value 2</element2></root>";
+
+        // Load the XML into a Document object
+        Document document = loadXMLFromString(xml);
+
+        // Create an XPath object
+        XPath xpath = XPathFactory.newInstance().newXPath();
+
+        // Compile the XPath expression
+        String xpathExpression = "//element1"; // Perfect query
+        XPathExpression expr;
+        try {
+            expr = xpath.compile(xpathExpression);
+
+            // Execute the XPath expression against the Document
+            Object result = expr.evaluate(document, XPathConstants.NODESET);
+
+            // Process the query result
+            if (result instanceof NodeList) {
+                NodeList nodeList = (NodeList) result;
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    Node node = nodeList.item(i);
+                    System.out.println(node.getTextContent());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static Document loadXMLFromString(String xml) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            InputSource is = new InputSource(new StringReader(xml));
+            return builder.parse(is);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    
+}
+In this example, the XML document is represented as a string (xml). The loadXMLFromString method is used to load the XML string into a Document object. The XPath expression (xpathExpression) is defined as "//element1", which selects all element1 nodes in the XML document.
+
+The XPath expression is compiled and evaluated against the Document using the XPath object. The result is then processed based on the expected result type (XPathConstants.NODESET in this example), which is a collection of nodes. In the example, the selected nodes are printed out.
